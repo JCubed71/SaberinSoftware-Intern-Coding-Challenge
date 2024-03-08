@@ -1,0 +1,92 @@
+﻿@using ContactManager.Data
+
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Primary Email</th> @*Jordan added*@
+            <th></th>
+        </tr>
+    </thead>
+    <tbody class="hoverHighlightTable">
+  
+        @foreach (var contact in Model.Contacts)
+        {
+            <tr>
+                <td class="editContact" data-id="@contact.Id">@contact.Title</td>
+                <td class="editContact" data-id="@contact.Id">@contact.FirstName</td>
+                <td class="editContact" data-id="@contact.Id">@contact.LastName</td>
+ 
+                @{
+                    /*var primaryEmail = "no primary email";
+                    if(@contact.EmailAddresses != null)
+                    {
+                        Console.WriteLine("Email(s) found for "+contact.FirstName +" with "+contact.EmailAddresses.Count);
+                        foreach (var emailAddress in @contact.EmailAddresses)
+                        {
+                            Console.WriteLine("sorting email address " + emailAddress.Email);
+                            if(emailAddress.Type == EmailType.Primary)
+                            {
+                                primaryEmail = emailAddress.Email;
+                                Console.WriteLine("Match found: "+ emailAddress.Email +" is type "+ emailAddress.Type +" is primary email");
+                                break;
+                            }
+                            else
+                            {
+                                Console.WriteLine("No match " + emailAddress.Email + " is type " + emailAddress.Type);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No Email(s) found for " + contact.FirstName);
+                    }*/
+
+                }
+                   
+                <td class="editContact" data-id="@contact.Id">@GetPrimaryEmail(contact)</td> @*Jordan Added*@
+                <td class="whiteBackground defaultCursor"><a class="redText float-right pointer deleteContact" title="Delete Contact" data-toggle="modal" data-target="#modal-delete" data-id="@contact.Id">X</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
+   
+
+@functions {
+    //Jordan added
+    string GetPrimaryEmail(Contact contact)
+    {
+        if (contact.EmailAddresses.Count > 0)//If contact has any email addresses
+        {
+            var primaryEmail = "";//temporarily set primaryEmail to nothing
+            foreach(var email in contact.EmailAddresses)//For each email acontact has
+            {
+                if(email.Type == EmailType.Primary)//if email is of enum type "Primary" assign its email string to primaryEmail
+                {
+                    primaryEmail = email.Email;
+                }
+            }
+            if(primaryEmail == "" && contact.EmailAddresses.Count > 0)//If the contact had emails but none of enum type "Primary" then set displayed primaryEmail as their first email
+            {
+                primaryEmail = contact.EmailAddresses[0].Email;
+            }
+            return primaryEmail; //return the primary email value whether its an actual primary email or if contact has no primary email and must display default email
+        }
+        else //If the contact had no email
+        {
+            return "No email set";
+        }
+
+    }
+}
+
+
+
+
+
